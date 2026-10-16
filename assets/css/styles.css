@@ -1,22 +1,58 @@
 /* ======================================================
-   1. GLOBAL VARIABLES & RESET
-   Mengatur warna dasar dan reset margin browser
+   SMARTONE JOURNEY — "PLAYFUL ARCADE"
+   Neo-brutalist playful board game UI.
+   Struktur selector & id dipertahankan agar game.js tetap jalan.
 ====================================================== */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap");
 
+/* ======================================================
+   1. DESIGN TOKENS
+====================================================== */
 :root {
-  --bg-dark: #070b2d;
-  --bg-medium: #1f2041;
-  --text-light: #f0f0f0;
-  --accent-blue: #00bbf9;
+  /* Kanvas & tinta */
+  --cream: #fff8ec;
+  --paper: #ffffff;
+  --ink: #1b1b2f;
+  --ink-soft: #55556e;
 
-  /* Warna Kategori Kotak */
-  --color-income: #21d247;
-  --color-expense: #dc3545;
-  --color-tax: #ff00d4;
-  --color-save: #007bff;
-  --color-bonus: #6f42c1;
-  --color-penalty: #dc3545;
+  /* Warna aksen */
+  --blue: #2e7cf6;
+  --blue-dark: #1c5fd0;
+  --yellow: #ffc93c;
+  --yellow-dark: #f0ab00;
+  --pink: #ff6b9d;
+  --green: #35d07f;
+  --purple: #9b6bff;
+  --orange: #ff8a3d;
+  --red: #f2545b;
+
+  /* Bayangan keras (hard shadow) */
+  --shadow-xs: 2px 2px 0 var(--ink);
+  --shadow-sm: 3px 3px 0 var(--ink);
+  --shadow: 5px 5px 0 var(--ink);
+  --shadow-lg: 8px 8px 0 var(--ink);
+
+  /* Bentuk */
+  --r-sm: 10px;
+  --r: 16px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+  --line: 3px solid var(--ink);
+
+  /* Warna kategori kotak (pastel solid) */
+  --color-income: #c7f5d4;
+  --color-expense: #ffd3d6;
+  --color-tax: #ffeda8;
+  --color-save: #cfe0ff;
+  --color-bonus: #e6d9ff;
+  --color-penalty: #ffdcc2;
+  --color-start: #ececf3;
+
+  /* Alias lama agar tidak ada referensi yang putus */
+  --bg-dark: var(--ink);
+  --bg-medium: var(--paper);
+  --text-light: var(--ink);
+  --accent-blue: var(--blue);
 }
 
 * {
@@ -25,25 +61,42 @@
   box-sizing: border-box;
 }
 
+html,
 body {
-  font-family: "Poppins", sans-serif;
-  background-color: #070b2d;
-  /* Fallback color */
-  color: var(--text-light);
+  height: 100%;
+}
+
+body {
+  font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 700;
+  background-color: var(--cream);
+  color: var(--ink);
   overflow: hidden;
-  /* Mencegah scroll halaman utama */
-  height: 100vh;
   width: 100%;
   text-align: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Fredoka", "Nunito", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 /* ======================================================
    2. SCREEN SYSTEM & BACKGROUNDS
-   Mengatur perpindahan antar layar (Landing -> Setup -> Game)
 ====================================================== */
 .screen {
   display: none;
-  /* Default sembunyi */
   height: 100%;
   width: 100%;
   position: absolute;
@@ -51,46 +104,81 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .screen.active {
   display: flex;
-  /* Tampilkan jika ada class active */
 }
 
-/* Background Animasi untuk Landing & Setup */
+/* Kanvas cream + dot grid untuk landing & setup */
 #screen-landing,
 #screen-setup {
-  background: linear-gradient(-45deg, #070b2d, #1f2041, #1cb5e0, #000046);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  background-color: var(--cream);
+  background-image: radial-gradient(rgba(27, 27, 47, 0.13) 1.6px, transparent 1.6px);
+  background-size: 26px 26px;
 }
 
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
+/* Bentuk dekoratif melayang */
+#screen-landing::before,
+#screen-setup::before,
+#screen-landing::after,
+#screen-setup::after {
+  content: "";
+  position: absolute;
+  border: var(--line);
+  pointer-events: none;
+  opacity: 0.55;
+}
 
-  50% {
-    background-position: 100% 50%;
-  }
+#screen-landing::before,
+#screen-setup::before {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: var(--yellow);
+  top: 8%;
+  left: 6%;
+  animation: floatY 6s ease-in-out infinite;
+}
 
+#screen-landing::after,
+#screen-setup::after {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--r-lg);
+  background: var(--pink);
+  bottom: 10%;
+  right: 7%;
+  transform: rotate(18deg);
+  animation: floatY 7.5s ease-in-out infinite reverse;
+}
+
+@keyframes floatY {
+  0%,
   100% {
-    background-position: 0% 50%;
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(6deg);
   }
 }
 
+/* Latar area permainan */
+#screen-game {
+  background-color: var(--cream);
+  background-image: radial-gradient(rgba(27, 27, 47, 0.09) 1.6px, transparent 1.6px);
+  background-size: 26px 26px;
+}
+
 /* ======================================================
-/* ======================================================
-   TRANSISI ANTAR LAYAR (CINEMA FADE OVERLAY)
+   3. TRANSISI ANTAR LAYAR
 ====================================================== */
 #transition-overlay {
   position: fixed;
   inset: 0;
-  background: #05071b;
-  /* Warna gelap background */
+  background: var(--ink);
   z-index: 20000;
-  /* Paling atas */
   opacity: 0;
   pointer-events: none;
   transition: opacity 1s ease-in-out;
@@ -99,126 +187,235 @@ body {
 #transition-overlay.active {
   opacity: 1;
   pointer-events: all;
-  /* Block klik saat gelap */
-}
-
-/* Background Fokus Radial untuk Game Board */
-#screen-game {
-  background: radial-gradient(circle at center, #1f2041 0%, #05071b 85%);
-  background-image: radial-gradient(circle at center, #1f2041 0%, #05071b 85%),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
-  /* Pola Grid Tipis */
 }
 
 /* ======================================================
-   3. BUTTONS & CONTROLS
+   4. BUTTONS & CONTROLS
 ====================================================== */
 button {
-  background: var(--accent-blue);
-  color: #000;
-  font-weight: 700;
-  padding: 12px 28px;
-  border-radius: 50px;
+  font-family: "Fredoka", "Nunito", sans-serif;
+  font-weight: 600;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 13px 30px;
+  border-radius: var(--r-pill);
+  border: var(--line);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  border: none;
-  transition: 0.2s;
+  font-size: 1rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
 }
 
 button:hover {
-  transform: scale(1.05);
-  background: #fff;
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow);
+}
+
+button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
+  box-shadow: var(--shadow-xs);
+  transform: none;
+  filter: grayscale(0.35);
 }
 
-/* Tombol Transparan (Landing Page) */
 .btn-secondary {
-  background: transparent;
-  color: var(--text-light);
-  border: 2px solid var(--accent-blue);
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--line);
+  box-shadow: var(--shadow-sm);
   margin-top: 15px;
 }
 
 .btn-secondary:hover {
-  background: var(--accent-blue);
-  color: #000;
-}
-
-/* Tombol Bantuan Floating (Pojok Kanan Atas) */
-.btn-help {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--accent-blue);
-  color: #000;
-  font-size: 28px;
-  font-weight: 700;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  box-shadow: 0 4px 15px rgba(0, 187, 249, 0.4);
-  transition: all 0.3s ease;
-}
-
-.btn-help:hover {
-  transform: scale(1.1) rotate(15deg);
-  box-shadow: 0 6px 20px rgba(0, 187, 249, 0.6);
-}
-
-/* Tombol Kembali Floating (Pojok Kiri Atas) */
-.btn-back {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
-  border: 2px solid var(--accent-blue);
+  background: var(--blue);
   color: #fff;
-  font-size: 24px;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  border: var(--line);
+  box-shadow: var(--shadow-sm);
+  padding: 13px 42px;
+  border-radius: var(--r-pill);
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btn-primary:hover {
+  background: var(--blue-dark);
+  color: #fff;
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow);
+}
+
+.btn-danger {
+  background: var(--red);
+  color: #fff;
+  border: var(--line);
+  box-shadow: var(--shadow-sm);
+  padding: 13px 32px;
+  border-radius: var(--r-pill);
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+}
+
+.btn-danger:hover {
+  background: #d63c43;
+  color: #fff;
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow);
+}
+
+.confirm-text {
+  text-align: center;
+}
+
+.confirm-text p {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.winner-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.winner-actions .btn-secondary {
+  margin-top: 0 !important;
+}
+
+/* Tombol bulat mengambang */
+.btn-help,
+.btn-back,
+.btn-mute,
+.btn-sidebar-toggle {
+  position: fixed;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: var(--line);
+  box-shadow: var(--shadow-sm);
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+}
+
+#sidebar-toggle-btn {
+  display: none;
+}
+
+.btn-help:hover,
+.btn-back:hover,
+.btn-mute:hover,
+.btn-sidebar-toggle:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow);
+}
+
+.btn-help {
+  top: 20px;
+  right: 20px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.btn-back {
+  top: 20px;
+  left: 20px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 22px;
 }
 
 .btn-back:hover {
-  background: var(--accent-blue);
-  color: #000;
-  transform: scale(1.1) rotate(-10deg);
-  box-shadow: 0 0 15px var(--accent-blue);
+  background: var(--pink);
+}
+
+.btn-mute {
+  top: 84px;
+  right: 20px;
+  background: var(--paper);
+  font-size: 1.15rem;
+}
+
+.btn-mute.muted {
+  background: var(--red);
+  color: #fff;
 }
 
 /* ======================================================
-   4. LANDING & SETUP (CONTAINERS)
+   5. LANDING & SETUP (CONTAINERS)
 ====================================================== */
 .setup-container,
 .landing-container {
-  background: var(--bg-medium);
-  border-radius: 14px;
-  padding: 30px 40px;
-  width: 500px;
-  max-width: 90vw;
-  border: 3px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
+  background: var(--paper);
+  border: var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 36px 42px 42px;
+  width: 560px;
+  max-width: 92vw;
+  max-height: 92vh;
+  overflow-y: auto;
 }
 
+.landing-container h1 {
+  font-size: 2.4rem;
+  line-height: 1.1;
+  margin-bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
+.h1-rocket {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--blue);
+  border: var(--line);
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
+}
+
+.h1-rocket svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.landing-container > p {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
 
 .landing-container .button-welcome-screen {
   display: flex;
@@ -226,15 +423,26 @@ button:disabled {
   justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-top: 1.5rem;
+  margin-top: 1.6rem;
 }
 
-.landing-container .button-welcome-screen>* {
+.landing-container .button-welcome-screen > * {
   margin: 0 !important;
 }
 
+#gassMulaiBtn {
+  font-size: 1.15rem;
+  padding: 16px 44px;
+  background: var(--yellow);
+}
+
+/* Kartu setup */
 .setup-container h2 {
-  margin-top: 20px;
+  font-size: 1.15rem;
+  margin-top: 26px;
+  margin-bottom: 12px;
+  text-align: left;
+  color: var(--ink);
 }
 
 .setup-container h2:first-child {
@@ -243,95 +451,178 @@ button:disabled {
 
 .setup-container button#startBtn {
   margin-top: 30px;
+  width: 100%;
+  background: var(--green);
+  font-size: 1.1rem;
+  padding: 15px 30px;
 }
 
 .setup-container select {
   display: none;
 }
 
-/* Hide old select */
-
 /* Group Tombol Pilihan Pemain */
 .btn-group {
   display: flex;
-  gap: 10px;
-  margin: 10px 0 0px 0;
+  gap: 12px;
+  margin: 10px 0 0 0;
 }
 
 .btn-choice {
-  background: var(--bg-dark);
-  color: var(--text-light);
-  border: 2px solid var(--bg-medium);
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--line);
+  box-shadow: var(--shadow-xs);
   flex-grow: 1;
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 12px;
+  border-radius: var(--r);
+  font-size: 0.95rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
 }
 
 .btn-choice:hover {
-  background: var(--bg-medium);
+  background: #f2f4ff;
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-choice .count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border-radius: var(--r-pill);
+  background: var(--blue);
+  color: #fff;
+  border: 2px solid var(--ink);
+  font-size: 0.85rem;
+  font-weight: 800;
+  font-family: "Nunito", sans-serif;
 }
 
 .btn-choice.selected {
-  background: var(--accent-blue);
-  color: #000;
-  border-color: var(--accent-blue);
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-choice.selected .count-badge {
+  background: var(--yellow);
+  color: var(--ink);
 }
 
 /* Grid Kartu Pilihan Kategori */
 .card-group {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  /* 3 Kolom Presisi */
-  gap: 15px;
+  gap: 14px;
   margin: 10px 0 20px 0;
   width: 100%;
 }
 
 .card-choice {
-  background: var(--bg-dark);
-  color: var(--text-light);
-  border: 2px solid var(--bg-medium);
-  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--line);
+  box-shadow: var(--shadow-xs);
+  border-radius: var(--r);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 110px;
-  padding: 15px;
+  min-height: 116px;
+  padding: 14px 10px;
   text-align: center;
+  gap: 8px;
 }
 
 .card-choice span {
-  font-size: 0.85rem;
-  font-weight: 500;
-  line-height: 1.3;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.25;
 }
 
 .card-choice .emoji-icon {
-  font-size: 2rem;
-  margin-bottom: 8px;
+  font-size: 1.6rem;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  flex-shrink: 0;
 }
 
 .card-choice:hover {
-  background: var(--bg-medium);
-  transform: translateY(-5px);
-  border-color: rgba(255, 255, 255, 0.3);
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow);
+  background: #f7f9ff;
 }
 
 .card-choice.selected {
-  background: var(--accent-blue);
-  color: #000;
-  border-color: var(--accent-blue);
-  font-weight: 700;
-  box-shadow: 0 0 15px rgba(0, 187, 249, 0.4);
+  background: var(--yellow);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-choice.selected .emoji-icon {
+  background: var(--paper);
+}
+
+/* Header logo */
+.header-logos {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 26px;
+  background: var(--paper);
+  padding: 10px 18px;
+  border-radius: var(--r);
+  border: var(--line);
+  box-shadow: var(--shadow-xs);
+}
+
+.logo-img {
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.06);
+}
+
+.logo-school {
+  height: 62px;
+}
+
+.logo-iso {
+  height: 46px;
+  max-width: 140px;
+}
+
+.header-logos .divider {
+  width: 3px;
+  height: 46px;
+  background: var(--ink);
+  opacity: 0.2;
+  border-radius: 3px;
 }
 
 /* ======================================================
-  5. GAME AREA LAYOUT (HEADER & BOARD)
+   6. GAME AREA LAYOUT
 ====================================================== */
 .center-area {
   display: flex;
@@ -343,23 +634,24 @@ button:disabled {
 }
 
 .center-area h1 {
-  font-size: 2.5rem;
-  margin-bottom: 5px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  font-size: 2.1rem;
+  margin-bottom: 8px;
+  color: var(--ink);
 }
 
 .category-badge {
-  font-size: 1rem;
-  color: var(--accent-blue);
-  background: rgba(0, 0, 0, 0.4);
-  padding: 5px 20px;
-  border-radius: 20px;
-  margin-bottom: 15px;
-  font-weight: 500;
-  border: 1px solid rgba(0, 187, 249, 0.3);
+  font-family: "Fredoka", sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--yellow);
+  padding: 7px 22px;
+  border-radius: var(--r-pill);
+  border: var(--line);
+  box-shadow: var(--shadow-xs);
+  margin-bottom: 16px;
+  font-weight: 600;
 }
 
-/* Wrapper Papan (Pusat Tata Surya) - Diperbesar */
 #board-wrapper {
   width: 520px;
   height: 520px;
@@ -367,60 +659,71 @@ button:disabled {
   margin: 0 auto;
 }
 
-/* Grid System 6x6 */
+/* Papan: playmat putih */
 .board {
   display: grid;
   width: 100%;
   height: 100%;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(6, 1fr);
-  gap: 8px;
+  gap: 7px;
   grid-auto-rows: 1fr;
+  background: var(--paper);
+  border: var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 12px;
 }
 
 /* ======================================================
-  6. PLAYER INFO BOXES (GLASSMORPHISM)
+   7. PLAYER INFO BOXES
+   (memakai outline + filter karena JS menimpa
+    inline border & box-shadow pada elemen ini)
 ====================================================== */
 .player-info-box {
-  background: rgba(31, 32, 65, 0.85);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
+  background: var(--paper);
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+  border-radius: var(--r);
   padding: 0;
-  /* Padding diatur di header/body */
-  width: 220px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  width: 210px;
   text-align: left;
   font-size: 0.85rem;
   line-height: 1.6;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  /* !important menimpa box-shadow inline dari game.js */
+  box-shadow: var(--shadow) !important;
   overflow: hidden;
   position: absolute;
   z-index: 10;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .player-info-box:hover {
   transform: scale(1.02);
+  box-shadow: var(--shadow-lg) !important;
 }
 
-/* Layout Header & Body Box */
 .p-header {
-  padding: 10px 15px;
-  color: #000;
-  font-weight: 700;
+  padding: 9px 14px;
+  color: var(--ink);
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
+  border-bottom: 3px solid var(--ink);
 }
 
 .p-body {
-  padding: 12px 15px;
-  color: #f0f0f0;
+  padding: 12px 14px;
+  color: var(--ink);
 }
 
 .p-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   margin-bottom: 4px;
 }
@@ -429,7 +732,6 @@ button:disabled {
   margin-bottom: 0;
 }
 
-/* Posisi Box di 4 Sudut Luar Papan */
 .pos-tl {
   top: 20px;
   right: 100%;
@@ -454,36 +756,86 @@ button:disabled {
   margin-left: 25px;
 }
 
+/* Giliran aktif — JS menyetel --player-color */
+.player-info-box.active-turn {
+  box-shadow:
+    0 0 0 3px var(--player-color, #fff),
+    0 0 20px var(--player-color, rgba(255, 255, 255, 0.5)) !important;
+  transform: scale(1.08) !important;
+  z-index: 100 !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+
+/* Status tereliminasi */
+.player-info-box.eliminated {
+  filter: grayscale(1) opacity(0.75);
+  pointer-events: none;
+}
+
+.stamp-eliminated {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border: 4px solid var(--red);
+  color: var(--red);
+  background: rgba(255, 255, 255, 0.92);
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 10px;
+  z-index: 20;
+  box-shadow: var(--shadow-xs);
+  animation: stampIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes stampIn {
+  from {
+    transform: translate(-50%, -50%) scale(2) rotate(0deg);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1) rotate(-15deg);
+    opacity: 1;
+  }
+}
+
 /* ======================================================
-   7. TILES (KOTAK) & PIONS (NEON)
+   8. TILES
 ====================================================== */
 .tile {
-  padding: 4px;
+  position: relative;
+  padding: 5px 4px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 2px;
   text-align: center;
   overflow: hidden;
   word-wrap: break-word;
   overflow-wrap: anywhere;
   line-height: 1.15;
-  border-radius: 12px;
-  /* Smooth Corner */
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  border-radius: var(--r-sm);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tile .title {
+  font-family: "Fredoka", sans-serif;
   font-size: 9px;
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.12;
 }
 
 .tile .effect {
-  font-size: 7.2px;
-  opacity: 0.85;
-  line-height: 1.1;
+  font-size: 7.4px;
+  font-weight: 700;
+  opacity: 0.75;
+  line-height: 1.12;
 }
 
 .tile.void {
@@ -493,114 +845,111 @@ button:disabled {
   background: transparent !important;
 }
 
-/* Warna Spesifik Tile */
 .tile.income {
-  background: linear-gradient(135deg,
-      rgba(31, 138, 36, 0.35),
-      rgba(31, 138, 36, 0.15));
-  border-color: rgba(31, 138, 36, 0.5);
+  background: var(--color-income);
 }
 
 .tile.expense {
-  background: linear-gradient(135deg,
-      rgba(171, 35, 70, 0.35),
-      rgba(171, 35, 70, 0.15));
-  border-color: rgba(171, 35, 70, 0.5);
+  background: var(--color-expense);
 }
 
 .tile.tax {
-  background: linear-gradient(135deg,
-      rgba(184, 134, 11, 0.35),
-      rgba(184, 134, 11, 0.15));
-  border-color: rgba(184, 134, 11, 0.5);
+  background: var(--color-tax);
 }
 
 .tile.save {
-  background: linear-gradient(135deg,
-      rgba(30, 111, 159, 0.35),
-      rgba(30, 111, 159, 0.15));
-  border-color: rgba(30, 111, 159, 0.5);
+  background: var(--color-save);
 }
 
 .tile.bonus {
-  background: linear-gradient(135deg,
-      rgba(107, 45, 189, 0.35),
-      rgba(107, 45, 189, 0.15));
-  border-color: rgba(107, 45, 189, 0.5);
+  background: var(--color-bonus);
 }
 
 .tile.penalty {
-  background: linear-gradient(135deg,
-      rgba(189, 95, 45, 0.35),
-      rgba(189, 95, 45, 0.15));
-  border-color: rgba(189, 95, 45, 0.5);
+  background: var(--color-penalty);
 }
 
 .tile.start {
-  background: linear-gradient(135deg,
-      rgba(128, 128, 128, 0.25),
-      rgba(128, 128, 128, 0.1));
-  border-color: rgba(128, 128, 128, 0.5);
+  background: var(--color-start);
 }
 
 .tile.highlight {
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.08);
-  transform: scale(1.01);
+  transform: scale(1.06);
+  box-shadow: 0 0 0 3px var(--blue), 0 0 18px rgba(46, 124, 246, 0.55);
+  z-index: 5;
 }
 
-/* Gaya Pion (Simbol Catur Neon) */
+/* ======================================================
+   9. PIONS (chip token)
+====================================================== */
 .pion {
-  width: 32px;
-  height: 32px;
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  font-size: 38px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  box-shadow: 0 3px 0 rgba(27, 27, 47, 0.55);
+  font-size: 17px;
   line-height: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #fff;
   position: absolute;
   z-index: 3000;
   margin-top: -15px;
   transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+    top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.15s ease;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
 }
 
 .pion:hover {
-  transform: scale(1.3) translateY(-5px);
+  transform: scale(1.25) translateY(-3px);
   z-index: 3001;
   cursor: help;
+  box-shadow: 0 5px 0 rgba(27, 27, 47, 0.55);
 }
 
-/* Warna Neon per Pemain */
+/* Warna mengikuti tokenColors di game.js */
 #pion1 {
-  color: #00eaff;
-  text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;
-  filter: drop-shadow(0 5px 5px rgba(0, 234, 255, 0.4));
+  background: #22d3ee;
 }
 
 #pion2 {
-  color: #ffc42b;
-  text-shadow: 0 0 10px #ffc42b, 0 0 20px #ffc42b;
-  filter: drop-shadow(0 5px 5px rgba(255, 196, 43, 0.4));
+  background: #fbbf24;
+  color: var(--ink);
+  text-shadow: none;
 }
 
 #pion3 {
-  color: #ff4d4d;
-  text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
-  filter: drop-shadow(0 5px 5px rgba(255, 77, 77, 0.4));
+  background: #ef4444;
 }
 
 #pion4 {
-  color: #3cff75;
-  text-shadow: 0 0 10px #3cff75, 0 0 20px #3cff75;
-  filter: drop-shadow(0 5px 5px rgba(60, 255, 117, 0.4));
+  background: #22c55e;
+}
+
+@keyframes pawnExit {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.4) rotate(-20deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) rotate(180deg) translateY(100px);
+    opacity: 0;
+  }
+}
+
+.pion.exiting {
+  animation: pawnExit 1s forwards ease-in;
 }
 
 /* ======================================================
-   8. DICE & OVERLAY (CENTER BOARD)
+   10. DICE & OVERLAY
 ====================================================== */
 .turn-info-center {
   display: none !important;
@@ -616,9 +965,21 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 16px;
   pointer-events: none;
   z-index: 500;
+}
+
+#diceOverlay::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 190px;
+  height: 190px;
+  border: 3px dashed rgba(27, 27, 47, 0.22);
+  border-radius: 50%;
 }
 
 #dice {
@@ -627,7 +988,6 @@ button:disabled {
   width: 150px;
   height: 150px;
   background: transparent;
-  /* Ubah background jadi transparan */
   border-radius: 24px;
   display: flex;
   justify-content: center;
@@ -635,7 +995,6 @@ button:disabled {
   cursor: pointer;
   transition: transform 0.2s, opacity 0.2s;
   perspective: 1000px;
-  /* Tambahkan perspektif untuk 3D */
 }
 
 .dice-container {
@@ -644,7 +1003,6 @@ button:disabled {
   position: relative;
   transform-style: preserve-3d;
   transform: translateZ(-75px);
-  /* Mundurkan kubus agar pas di tengah */
   transition: transform 0.5s ease;
 }
 
@@ -652,18 +1010,19 @@ button:disabled {
   position: absolute;
   width: 150px;
   height: 150px;
-  background: white;
-  border: 2px solid #ccc;
+  background: var(--paper);
+  border: 3px solid var(--ink);
   border-radius: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 64px;
-  color: #000;
+  font-family: "Fredoka", sans-serif;
+  font-size: 60px;
+  color: var(--ink);
   font-weight: 700;
+  box-shadow: inset 0 0 0 6px var(--cream);
 }
 
-/* Posisi setiap sisi kubus */
 .face.front {
   transform: rotateY(0deg) translateZ(75px);
 }
@@ -688,7 +1047,6 @@ button:disabled {
   transform: rotateY(-90deg) translateZ(75px);
 }
 
-/* Kelas untuk menunjukkan hasil akhir dadu */
 .dice-container.show-1 {
   transform: translateZ(-75px) rotateY(0deg);
 }
@@ -718,24 +1076,22 @@ button:disabled {
 }
 
 #dice[aria-disabled="true"] {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
   transform: scale(0.95);
 }
 
-/* Teks Kapsul di Bawah Dadu */
 .dice-instruction {
-  font-size: 1rem;
+  font-family: "Fredoka", sans-serif;
+  font-size: 0.98rem;
   font-weight: 600;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 8px 24px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  letter-spacing: 0.5px;
+  color: var(--ink);
+  background: var(--paper);
+  border: var(--line);
+  box-shadow: var(--shadow-xs);
+  padding: 9px 24px;
+  border-radius: var(--r-pill);
+  letter-spacing: 0.3px;
   transition: all 0.3s ease;
 }
 
@@ -743,7 +1099,6 @@ button:disabled {
   0% {
     transform: translateZ(-75px) rotateX(0deg) rotateY(0deg);
   }
-
   100% {
     transform: translateZ(-75px) rotateX(1080deg) rotateY(720deg);
   }
@@ -754,28 +1109,29 @@ button:disabled {
 }
 
 /* ======================================================
-   9. MODALS (QUIZ & HOW TO)
+   11. MODALS
 ====================================================== */
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(27, 27, 47, 0.62);
   backdrop-filter: blur(3px);
 }
 
 dialog {
   border: none;
   padding: 0;
+  background: transparent;
 }
 
-/* Quiz Modal */
 #quizModal,
 #confirmationModal {
-  background: var(--bg-medium);
-  color: var(--text-light);
-  padding: 22px;
-  border-radius: 14px;
-  width: 380px;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 24px;
+  border-radius: var(--r-lg);
+  border: var(--line);
+  box-shadow: var(--shadow-lg);
+  width: 400px;
   max-width: 90vw;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -796,9 +1152,11 @@ dialog {
 #quizModal .quiz-question,
 #quizQuestion,
 .quiz-question {
-  font-weight: 700;
-  font-size: 1.05rem;
-  margin-bottom: 8px;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1.08rem;
+  margin-bottom: 14px;
+  text-align: left;
 }
 
 #quizChoices {
@@ -811,49 +1169,83 @@ dialog {
   display: flex;
   gap: 12px;
   align-items: center;
-  padding: 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  padding: 11px 14px;
+  border-radius: var(--r);
+  background: var(--cream);
+  border: 2px solid var(--ink);
   cursor: pointer;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+#quizChoices label:hover {
+  background: #f2f4ff;
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-xs);
+}
+
+#quizChoices input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue);
+  flex-shrink: 0;
 }
 
 .quiz-footer {
-  /* Footer for quiz modal (kept separate from general .modal-footer) */
-  padding: 20px 25px;
-  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  padding-top: 18px;
+  border-top: 3px solid var(--ink);
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.btn-primary {
-  background: var(--accent-blue);
-  color: #000;
-  font-weight: 700;
-  padding: 12px 40px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s;
+.quiz-footer .btn-secondary {
+  margin-top: 0 !important;
+  margin-left: 0 !important;
 }
 
-.btn-primary:hover {
-  transform: scale(1.05);
-  background: #fff;
-  box-shadow: 0 4px 15px rgba(0, 187, 249, 0.4);
+/* Notif di dalam modal (JS memakai id modalNotif) */
+#modalNotif {
+  margin-top: 14px;
+  padding: 12px 18px;
+  background: var(--color-income);
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: none;
+  text-align: center;
+  animation: fadePopup 0.4s ease-out;
 }
 
-/* How To Play Modal (Flexbox Fixed) */
+@keyframes fadePopup {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cara Bermain */
 #howToPlayModal {
-  background: var(--bg-medium);
-  color: var(--text-light);
+  background: var(--paper);
+  color: var(--ink);
   padding: 0;
-  border-radius: 16px;
-  width: 600px;
-  max-width: 90vw;
+  border-radius: var(--r-lg);
+  border: var(--line);
+  box-shadow: var(--shadow-lg);
+  width: 620px;
+  max-width: 92vw;
   height: 85vh;
   max-height: 800px;
-  border: 2px solid rgba(0, 187, 249, 0.3);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -865,7 +1257,6 @@ dialog {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* Penting agar footer tidak kepotong */
 }
 
 #howToPlayModal[open] {
@@ -877,100 +1268,166 @@ dialog {
 
 .modal-header {
   flex-shrink: 0;
-  background: linear-gradient(135deg, var(--accent-blue), #0099cc);
-  padding: 20px 25px;
+  background: var(--blue);
+  padding: 18px 24px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  border-bottom: var(--line);
 }
 
 .modal-content {
   flex: 1;
   overflow-y: auto;
-  padding: 25px;
+  padding: 24px;
   text-align: left;
 }
 
 .modal-footer {
   flex-shrink: 0;
-  padding: 20px 25px;
-  background: var(--bg-medium);
-  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 18px 24px;
+  background: var(--cream);
+  border-top: var(--line);
   display: flex;
   justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 24px;
-  color: #000;
-  font-weight: 700;
+  font-size: 1.35rem;
+  color: #fff;
 }
 
 .btn-close {
-  background: transparent;
-  border: none;
-  color: #000;
-  font-size: 32px;
-  cursor: pointer;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-size: 22px;
+  line-height: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  padding: 0;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background: var(--yellow);
 }
 
 .modal-content section {
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
 
 .modal-content h3 {
-  font-size: 18px;
-  margin-bottom: 12px;
-  color: var(--accent-blue);
-  border-bottom: 2px solid rgba(0, 187, 249, 0.2);
+  font-size: 1.02rem;
+  margin-bottom: 10px;
+  color: var(--ink);
+  border-bottom: 2px solid rgba(27, 27, 47, 0.15);
   padding-bottom: 8px;
 }
 
-/* Legend Colors */
+.modal-content p,
+.modal-content li {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.modal-content ol,
+.modal-content ul {
+  padding-left: 22px;
+}
+
+.modal-content li + li {
+  margin-top: 6px;
+}
+
+.modal-content strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
 .tile-legend {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
+  padding: 9px 12px;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-sm);
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
 .legend-color {
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: 2px solid var(--ink);
   flex-shrink: 0;
 }
 
+.legend-color.income {
+  background: var(--color-income);
+}
+
+.legend-color.expense {
+  background: var(--color-expense);
+}
+
+.legend-color.tax {
+  background: var(--color-tax);
+}
+
+.legend-color.save {
+  background: var(--color-save);
+}
+
+.legend-color.bonus {
+  background: var(--color-bonus);
+}
+
+.legend-color.penalty {
+  background: var(--color-penalty);
+}
+
 /* ======================================================
-   10. NOTIFICATIONS (MODERN GLASS STYLE)
+   12. NOTIFICATIONS
 ====================================================== */
 .notif-popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -40%) scale(0.9);
-  padding: 25px 40px;
-  background: rgba(20, 20, 40, 0.85);
-  backdrop-filter: blur(12px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
-  color: #fff;
+  padding: 26px 40px;
+  background: var(--paper);
+  border: var(--line);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--r-lg);
+  color: var(--ink);
   text-align: center;
-  z-index: 5000;
+  z-index: 9999 !important;
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
+  pointer-events: auto !important;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   width: 520px;
   max-width: 90vw;
@@ -983,77 +1440,113 @@ dialog {
 }
 
 .notif-popup span {
-  font-size: 26px;
-  font-weight: 700;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
   display: block;
   margin-bottom: 8px;
-
-  /* --- PERBAIKAN GRADASI TEXT --- */
-  background: linear-gradient(to right, #ffd700, #ff8c00);
-
-  /* Tambahkan properti standar ini agar warning hilang/berkurang */
-  background-clip: text;
-
-  /* Properti utama (wajib ada untuk Chrome/Edge/Safari) */
-  -webkit-background-clip: text;
-
-  /* Membuat warna asli teks transparan agar background muncul */
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  /* Fallback standard */
-
-  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
+  color: var(--ink);
 }
 
 .notif-popup small {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.6;
-  color: #e0e0e0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink-soft);
   display: block;
   margin-top: 5px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 2px solid rgba(27, 27, 47, 0.12);
   padding-top: 10px;
 }
 
-/* In-Modal Notif */
-.modal-notif {
-  margin-top: 15px;
-  padding: 12px 20px;
-  background: rgba(0, 200, 100, 0.15);
-  border: 1px solid rgba(0, 200, 100, 0.5);
-  border-radius: 12px;
-  color: #aaffcc;
-  font-weight: 600;
-  font-size: 15px;
-  display: none;
-  text-align: center;
-  animation: fadePopup 0.4s ease-out;
+.notif-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
-@keyframes fadePopup {
+.notif-icon-box {
+  font-size: 3.2rem;
+  margin-bottom: 5px;
+  animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
   from {
-    opacity: 0;
-    transform: translateY(10px);
+    transform: scale(0);
   }
-
   to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
-/* styles.css - Custom Popup Styles */
+.notif-title-box {
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
+.notif-amount-box {
+  font-family: "Fredoka", sans-serif;
+  font-size: 2.3rem;
+  font-weight: 700;
+  margin: 5px 0;
+}
+
+.notif-amount-box.plus {
+  color: #16a34a;
+}
+
+.notif-amount-box.minus {
+  color: var(--red);
+}
+
+.notif-desc-box {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  max-width: 90%;
+  line-height: 1.45;
+  background: var(--cream);
+  border: 2px solid rgba(27, 27, 47, 0.12);
+  padding: 9px 15px;
+  border-radius: var(--r-sm);
+  font-weight: 600;
+}
+
+.popup-close-btn {
+  margin-top: 15px;
+  padding: 10px 30px;
+  background: var(--blue);
+  color: #fff;
+  border: var(--line);
+  border-radius: var(--r-pill);
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}
+
+.popup-close-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-sm);
+  background: var(--blue-dark);
+}
+
+/* ======================================================
+   13. GAME OVER / WINNER OVERLAYS
+====================================================== */
 .custom-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  /* Background gelap banget */
-  backdrop-filter: blur(8px);
+  background: rgba(27, 27, 47, 0.72);
+  backdrop-filter: blur(6px);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -1069,15 +1562,15 @@ dialog {
 }
 
 .game-over-box {
-  background: linear-gradient(135deg, #1f2041, #070b2d);
-  border: 2px solid var(--accent-blue);
-  padding: 40px;
-  border-radius: 20px;
+  background: var(--paper);
+  border: var(--line);
+  padding: 38px 34px;
+  border-radius: var(--r-lg);
   text-align: center;
-  max-width: 400px;
+  max-width: 420px;
   width: 90%;
-  box-shadow: 0 0 30px rgba(0, 187, 249, 0.3);
-  transform: scale(0.8);
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.85);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -1086,165 +1579,266 @@ dialog {
 }
 
 .go-icon {
-  font-size: 80px;
-  margin-bottom: 20px;
+  font-size: 68px;
+  margin-bottom: 16px;
   animation: floatIcon 3s ease-in-out infinite;
 }
 
 @keyframes floatIcon {
-
   0%,
   100% {
     transform: translateY(0);
   }
-
   50% {
     transform: translateY(-10px);
   }
 }
 
 .game-over-box h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 10px;
-  color: var(--accent-blue);
+  color: var(--blue);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
 }
 
 .game-over-box p {
-  color: #e0e0e0;
-  margin-bottom: 30px;
+  color: var(--ink-soft);
+  margin-bottom: 26px;
   line-height: 1.6;
+  font-weight: 600;
 }
 
 .go-buttons {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
 }
 
-/* ======================================================
-   11. RESPONSIVE (MOBILE)
-====================================================== */
-@media (max-width: 600px) {
-  #board-wrapper {
-    width: 330px;
-    height: 330px;
-  }
-
-  .card-group {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  #dice {
-    width: 90px;
-    height: 90px;
-    font-size: 36px;
-  }
-
-  .center-area h1 {
-    font-size: 1.8rem;
-  }
-
-  #howToPlayModal {
-    width: 95vw;
-    max-height: 90vh;
-  }
-
-  .btn-help {
-    width: 45px;
-    height: 45px;
-    font-size: 24px;
-    top: 15px;
-    right: 15px;
-  }
-
-  .player-info-box {
-    width: 140px;
-    /* padding: 6px; */
-    font-size: 0.65rem;
-  }
+.go-buttons .btn-secondary {
+  margin-top: 0 !important;
 }
 
-/* REVISI */
-
-@media (max-width: 569px) {
-
-  .setup-container,
-  .landing-container>*:not(:first-child),
-  setup-container,
-  .landing-container>*:not(:last-child) {
-    margin-top: 1.5rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .setup-container {
-    max-height: 90%;
-    overflow: auto;
-  }
-
-  .setup-container .card-group {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-  .setup-container #player-count-group {
-    flex-wrap: wrap;
-  }
-}
-
-/* ======================================================
-   12. RESPONSIVE SIDEBAR (NEW)
-====================================================== */
-
-/* Tombol Toggle Sidebar (Hamburger) */
-.btn-sidebar-toggle {
+/* Winner */
+.winner-modal {
   position: fixed;
-  top: 80px;
-  /* Di bawah tombol back */
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
-  border: 2px solid var(--accent-blue);
-  z-index: 2000;
-  cursor: pointer;
-  display: none;
-  /* Sembunyi di desktop */
-  flex-direction: column;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(27, 27, 47, 0.94);
+  display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5px;
-  padding: 12px;
-}
-
-.btn-sidebar-toggle span {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background: var(--accent-blue);
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-/* Animasi Tombol Hamburger -> X */
-.btn-sidebar-toggle.open span:nth-child(1) {
-  transform: translateY(8px) rotate(45deg);
-}
-
-.btn-sidebar-toggle.open span:nth-child(2) {
+  z-index: 1000;
   opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-.btn-sidebar-toggle.open span:nth-child(3) {
-  transform: translateY(-8px) rotate(-45deg);
+.winner-modal.show {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Media Query untuk Tablet dan Mobile */
+.winner-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  transform: scale(0.5);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: var(--paper);
+  border: var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 40px 44px;
+  max-width: 90vw;
+}
+
+.winner-modal.show .winner-content {
+  transform: scale(1);
+}
+
+.winner-title {
+  font-size: 3.4rem;
+  font-weight: 700;
+  color: var(--yellow-dark);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.winner-name {
+  font-family: "Fredoka", sans-serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--ink);
+}
+
+.winner-trophy {
+  font-size: 5rem;
+  margin-bottom: 24px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+.winner-actions .btn-secondary {
+  margin-top: 0 !important;
+}
+
+#confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  opacity: 0.9;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ======================================================
+   14. FLYING POINTS
+====================================================== */
+.flying-point {
+  position: fixed;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1),
+    opacity 1s ease-in, top 1s cubic-bezier(0.19, 1, 0.22, 1),
+    left 1s cubic-bezier(0.19, 1, 0.22, 1);
+  opacity: 1;
+}
+
+.flying-point.plus {
+  color: #16a34a;
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 0 2px 0 rgba(27, 27, 47, 0.35);
+}
+
+.flying-point.minus {
+  color: var(--red);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 0 2px 0 rgba(27, 27, 47, 0.35);
+}
+
+/* ======================================================
+   15. LOADING OVERLAY
+====================================================== */
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--cream);
+  background-image: radial-gradient(rgba(27, 27, 47, 0.12) 1.6px, transparent 1.6px);
+  background-size: 26px 26px;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  transition: opacity 0.5s ease;
+}
+
+#loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-content {
+  text-align: center;
+  color: var(--ink);
+  background: var(--paper);
+  border: var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 34px 44px;
+}
+
+.loading-content h2 {
+  font-size: 1.3rem;
+  margin-bottom: 6px;
+}
+
+.loading-logo {
+  width: 170px;
+  margin-bottom: 18px;
+  animation: pulseLogo 2s infinite ease-in-out;
+}
+
+@keyframes pulseLogo {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+.progress-container {
+  width: 300px;
+  max-width: 70vw;
+  height: 16px;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  margin: 15px auto;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--blue);
+  transition: width 0.3s ease;
+}
+
+#loadingText {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-top: 10px;
+}
+
+/* ======================================================
+   16. RESPONSIVE — MOBILE / TABLET
+====================================================== */
 @media (max-width: 1024px) {
-
   #backBtnGame,
   #sidebar-toggle-btn {
     z-index: 3002 !important;
@@ -1252,47 +1846,69 @@ dialog {
 
   .center-area {
     padding-top: 80px;
-    /* Beri ruang untuk header */
   }
 
-  /* Tampilkan tombol sidebar */
   .btn-sidebar-toggle {
     display: flex;
+    top: 84px;
+    left: 20px;
+    flex-direction: column;
+    gap: 5px;
+    background: var(--paper);
   }
 
-  /* Kontainer Info Player menjadi Sidebar */
+  .btn-sidebar-toggle span {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: var(--ink);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-sidebar-toggle.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .btn-sidebar-toggle.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .btn-sidebar-toggle.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
   #player-info-container {
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
+    width: 290px;
     height: 100%;
-    background: rgba(15, 17, 49, 0.95);
-    backdrop-filter: blur(10px);
+    background: var(--cream);
+    border-right: var(--line);
+    box-shadow: 6px 0 0 rgba(27, 27, 47, 0.15);
     z-index: 3001;
     transform: translateX(-100%);
     transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    padding: 10rem 20px 20px;
+    padding: 9rem 20px 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    border-right: 2px solid var(--accent-blue);
+    gap: 18px;
+    overflow-y: auto;
   }
 
   #player-info-container.open {
     transform: translateX(0);
   }
 
-  /* Reset posisi absolut player box */
   .player-info-box {
     position: static;
     width: 100%;
     margin: 0;
     transform: none !important;
-    /* Hapus hover effect scale */
+    filter: drop-shadow(3px 3px 0 rgba(27, 27, 47, 0.8));
   }
 
-  /* Atur ulang posisi box di dalam sidebar */
   .pos-tl,
   .pos-tr,
   .pos-bl,
@@ -1303,11 +1919,16 @@ dialog {
     bottom: auto;
     margin: 0;
   }
+
+  .btn-mute {
+    top: 84px;
+    right: 20px;
+  }
 }
 
 @media (max-width: 768px) {
   .center-area h1 {
-    font-size: 2rem;
+    font-size: 1.7rem;
     margin-bottom: 10px;
   }
 
@@ -1318,6 +1939,12 @@ dialog {
     max-height: 450px;
   }
 
+  .board {
+    gap: 5px;
+    padding: 8px;
+    border-radius: var(--r);
+  }
+
   .tile .title {
     font-size: 8px;
   }
@@ -1326,17 +1953,22 @@ dialog {
     font-size: 6.5px;
   }
 
+  #diceOverlay::before {
+    width: 150px;
+    height: 150px;
+  }
+
   #dice {
     width: 120px;
     height: 120px;
   }
 
-  /* Penyesuaian Ukuran Dadu 3D */
   .face {
     width: 120px;
     height: 120px;
-    font-size: 56px;
+    font-size: 50px;
     border-radius: 20px;
+    box-shadow: inset 0 0 0 5px var(--cream);
   }
 
   .dice-container {
@@ -1392,8 +2024,20 @@ dialog {
   }
 
   .dice-instruction {
-    font-size: 0.9rem;
-    padding: 6px 18px;
+    font-size: 0.88rem;
+    padding: 7px 18px;
+  }
+
+  .category-badge {
+    font-size: 0.85rem;
+  }
+
+  .notif-popup {
+    padding: 22px 26px;
+  }
+
+  .notif-amount-box {
+    font-size: 1.9rem;
   }
 }
 
@@ -1403,17 +2047,22 @@ dialog {
     height: 95vw;
   }
 
+  #diceOverlay::before {
+    width: 128px;
+    height: 128px;
+  }
+
   #dice {
     width: 100px;
     height: 100px;
   }
 
-  /* Penyesuaian Ukuran Dadu 3D lebih kecil */
   .face {
     width: 100px;
     height: 100px;
-    font-size: 48px;
+    font-size: 42px;
     border-radius: 16px;
+    box-shadow: inset 0 0 0 4px var(--cream);
   }
 
   .dice-container {
@@ -1469,495 +2118,101 @@ dialog {
   }
 
   .pion {
-    font-size: 32px;
-  }
-}
-
-
-/* 1. Wadah Kaca untuk Logo (Agar tidak terlihat melayang polos) */
-.header-logos {
-  display: inline-flex;
-  /* Agar wadah mengikuti isi, bukan full width */
-  justify-content: center;
-  align-items: center;
-  gap: 25px;
-  margin-bottom: 30px;
-
-  /* Efek Glassmorphism */
-  background: rgba(255, 255, 255, 0.05);
-  /* Putih transparan tipis */
-  padding: 10px 10px;
-  border-radius: 20px;
-  /* Sudut membulat */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  /* Garis tepi halus */
-  backdrop-filter: blur(5px);
-  /* Efek blur di belakang logo */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  /* Bayangan lembut */
-}
-
-/* 2. Styling Umum Logo */
-.logo-img {
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  /* Sedikit bayangan pada logo agar pop-up */
-  transition: transform 0.3s ease;
-}
-
-.logo-img:hover {
-  transform: scale(1.05);
-  /* Efek zoom dikit pas di-hover */
-}
-
-/* 3. Penyeimbangan Ukuran (Visual Weight Balancing) */
-
-/* Logo Sekolah (Vertikal) - Kita set tingginya standar */
-.logo-school {
-  height: 70px;
-}
-
-/* Logo ISO (Horizontal) - Kita KECILKAN tingginya agar luasnya seimbang */
-.logo-iso {
-  height: 50px;
-  /* Lebih pendek dari sekolah, karena dia lebar */
-  max-width: 140px;
-  /* Jaga agar tidak terlalu lebar juga */
-}
-
-/* Garis Pemisah */
-.header-logos .divider {
-  width: 2px;
-  height: 50px;
-  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.4), transparent);
-}
-
-/* styles.css - New Popup Content Styles */
-
-.notif-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.notif-icon-box {
-  font-size: 3.5rem;
-  margin-bottom: 5px;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-  animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes bounceIn {
-  from {
-    transform: scale(0);
+    font-size: 14px;
+    width: 26px;
+    height: 26px;
+    margin-top: -13px;
   }
 
-  to {
-    transform: scale(1);
-  }
-}
-
-.notif-title-box {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #a5b4fc;
-  /* Warna biru muda lembut */
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.notif-amount-box {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin: 5px 0;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-.notif-amount-box.plus {
-  color: #4ade80;
-  /* Hijau terang */
-  background: linear-gradient(to bottom, #4ade80, #22c55e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.notif-amount-box.minus {
-  color: #f87171;
-  /* Merah terang */
-  background: linear-gradient(to bottom, #f87171, #ef4444);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.notif-desc-box {
-  font-size: 0.9rem;
-  color: #cbd5e1;
-  font-style: italic;
-  max-width: 80%;
-  line-height: 1.4;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 8px 15px;
-  border-radius: 10px;
-}
-
-/* ======================================================
-   12. ANIMATION: FLYING POINTS
-====================================================== */
-.flying-point {
-  position: fixed;
-  font-size: 1.5rem;
-  font-weight: 800;
-  pointer-events: none;
-  z-index: 9999;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1),
-    opacity 1s ease-in,
-    top 1s cubic-bezier(0.19, 1, 0.22, 1),
-    left 1s cubic-bezier(0.19, 1, 0.22, 1);
-  opacity: 1;
-}
-
-
-.flying-point.plus {
-  color: #4ade80;
-  /* Hijau Terang Solid */
-  text-shadow: 0 0 10px rgba(74, 222, 128, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
-  font-weight: 900;
-}
-
-.flying-point.minus {
-  color: #ef4444;
-  /* Merah Terang Solid */
-  text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
-  font-weight: 900;
-}
-
-@keyframes pawnExit {
-  0% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
+  .card-group {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  20% {
-    transform: scale(1.4) rotate(-20deg);
-    opacity: 1;
+  .setup-container,
+  .landing-container {
+    padding: 26px 22px 30px;
   }
 
-  100% {
-    transform: scale(0) rotate(180deg) translateY(100px);
-    opacity: 0;
-  }
-}
-
-.pion.exiting {
-  animation: pawnExit 1s forwards ease-in;
-}
-
-/* ======================================================
-   13. ELIMINATED STATE (STAMP EFFECT)
-====================================================== */
-.player-info-box.eliminated {
-  filter: grayscale(1) opacity(0.8);
-  border-color: #ef4444;
-  pointer-events: none;
-}
-
-.stamp-eliminated {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-15deg);
-  border: 5px solid #ef4444;
-  color: #ef4444;
-  font-size: 1.5rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  padding: 10px 15px;
-  border-radius: 10px;
-  opacity: 0.9;
-  z-index: 20;
-  background: rgba(0, 0, 0, 0.7);
-  box-shadow: 0 0 10px #ef4444;
-  animation: stampIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes stampIn {
-  from {
-    transform: translate(-50%, -50%) scale(2) rotate(0deg);
-    opacity: 0;
+  .landing-container h1 {
+    font-size: 1.85rem;
   }
 
-  to {
-    transform: translate(-50%, -50%) scale(1) rotate(-15deg);
-    opacity: 0.9;
-  }
-
-}
-
-/* ======================================================
-   14. WINNER MODAL & CONFETTI
-====================================================== */
-.winner-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(10, 10, 20, 0.95);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-
-.winner-modal.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.winner-content {
-  text-align: center;
-  color: #fff;
-  transform: scale(0.5);
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.winner-modal.show .winner-content {
-  transform: scale(1);
-}
-
-.winner-title {
-  font-size: 4rem;
-  font-weight: 900;
-  background: linear-gradient(to right, #fbbf24, #f59e0b, #d97706);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 20px;
-  text-shadow: 0 10px 30px rgba(245, 158, 11, 0.5);
-}
-
-.winner-name {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
-.winner-trophy {
-  font-size: 6rem;
-  margin-bottom: 30px;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-/* CONFETTI */
-#confetti-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.confetti {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #fff;
-  opacity: 0.8;
-}
-
-@keyframes fall {
-  0% {
-    transform: translateY(-100px) rotate(0deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(100vh) rotate(720deg);
-    opacity: 0;
-  }
-}
-
-/* ======================================================
-   13. MUTE BUTTON
-====================================================== */
-.btn-mute {
-  position: fixed;
-  top: 80px;
-  /* Di bawah sidebar toggle */
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid #ccc;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  padding: 0;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 100;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-mute:hover {
-  transform: scale(1.1);
-  background: #fff;
-}
-
-.btn-mute:active {
-  transform: scale(0.95);
-}
-
-.btn-mute.muted {
-  background: #ffdede;
-  border-color: #ff8888;
-}
-
-/* Responsif untuk Mobile */
-@media (max-width: 600px) {
-  .btn-mute {
+  .btn-help {
+    width: 46px;
+    height: 46px;
+    font-size: 22px;
     top: 15px;
-    right: 70px;
-    width: 45px;
-    height: 45px;
-    /* Geser ke kiri tombol sidebar */
+    right: 15px;
+  }
+
+  .btn-back {
+    width: 46px;
+    height: 46px;
+  }
+
+  #howToPlayModal {
+    width: 95vw;
+    max-height: 90vh;
+  }
+
+  .winner-content {
+    padding: 30px 24px;
+  }
+
+  .winner-title {
+    font-size: 2.4rem;
+  }
+
+  .winner-name {
+    font-size: 1.6rem;
+  }
+
+  .winner-trophy {
+    font-size: 3.6rem;
+  }
+}
+
+@media (max-width: 569px) {
+  .landing-container > *:not(:first-child) {
+    margin-top: 1.2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .setup-container {
+    max-height: 92%;
+    overflow: auto;
+  }
+
+  .setup-container .card-group {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .setup-container #player-count-group {
+    flex-wrap: wrap;
+  }
+
+  .btn-group {
+    flex-wrap: wrap;
   }
 }
 
 /* ======================================================
-   14. POPUP BUTTON STYLE
+   17. REDUCED MOTION
 ====================================================== */
-.popup-close-btn {
-  margin-top: 15px;
-  padding: 8px 20px;
-  background: var(--accent-blue, #0ea5e9);
-  color: white;
-  border: none;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-}
-
-.popup-close-btn:hover {
-  transform: scale(1.05);
-  background: #38bdf8;
-}
-
-/* FIX: Ensure popup is clickable and on top */
-.notif-popup {
-  pointer-events: auto !important;
-  z-index: 9999 !important;
-}
-
-/* ======================================================
-   15. LOADING OVERLAY
-====================================================== */
-#loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg-dark, #0f172a);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  transition: opacity 0.5s ease;
-}
-
-#loading-overlay.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loading-content {
-  text-align: center;
-  color: #fff;
-}
-
-.loading-logo {
-  width: 200px;
-  margin-bottom: 20px;
-  animation: pulseLogo 2s infinite ease-in-out;
-}
-
-@keyframes pulseLogo {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
+  #screen-landing::before,
+  #screen-landing::after,
+  #screen-setup::before,
+  #screen-setup::after {
+    animation: none !important;
   }
-}
-
-.progress-container {
-  width: 300px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 15px auto;
-}
-
-.progress-bar {
-  width: 0%;
-  height: 100%;
-  background: var(--accent-blue, #0ea5e9);
-  transition: width 0.3s ease;
-  box-shadow: 0 0 10px var(--accent-blue, #0ea5e9);
-}
-
-#loadingText {
-  font-size: 0.9rem;
-  opacity: 0.8;
-  margin-top: 10px;
-}
-
-/* ======================================================
-   16. TURN INDICATOR (SAFE VISUALS)
-====================================================== */
-/* Gunakan box-shadow dan transform agar tidak merusak layout overflow:hidden */
-.player-info-box.active-turn {
-  /* Glow Effect via Box Shadow */
-  box-shadow:
-    0 0 0 3px var(--player-color, #fff),
-    /* Border palsu */
-    0 0 20px var(--player-color, rgba(255, 255, 255, 0.5)) !important;
-
-  /* Scale Up sedikit untuk fokus */
-  transform: scale(1.08) !important;
-  z-index: 100 !important;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
 }
